@@ -1,5 +1,5 @@
 How to use app, must be on windows machine:
-1. Use npm start in the terminal to start the app.
+1. Use npm start in the terminal to start the app or run the StartApplication.bat file.
 2. node modules and python dependencies will be installed automatically.
 3. If the model, scaler, or preprocessor files are not present, the app will have to train the model. This will take a few moments.
 4. The powershell code will notify the user while the model is being trained.
