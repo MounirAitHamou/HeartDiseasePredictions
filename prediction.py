@@ -9,6 +9,41 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 
+missingitems = []
+try:
+    X_trained_resampled = np.load('xtrainedresampled.npy')
+    print('Resampled features data found', flush=True)
+except Exception as e:
+    print('Resampled features data not found', flush=True)
+    missingitems.append('xtrained')
+try:
+    y_trained_resampled = np.load('ytrainedresampled.npy')
+    print('Resampled target data found', flush=True)
+except Exception as e:
+    print('Resampled target data not found', flush=True)
+    missingitems.append('ytrained')
+try:
+    scaler = joblib.load('scaler.joblib')
+    print('Scaler found', flush=True)
+except Exception as e:
+    print('Scaler not found', flush=True)
+    missingitems.append('scaler')
+try:
+    preprocessor = joblib.load('preprocessor.pkl')
+    print('Preprocessor found', flush=True)
+except Exception as e:
+    missingitems.append('preprocessor')
+
+if len(missingitems) > 0:
+    print('Missing items:', missingitems, flush=True)
+    currentdir = os.path.dirname(os.path.abspath(__file__))
+    installer_path = os.path.join(currentdir, 'installer.py')
+    
+   
+    with open(installer_path) as f:
+        code = f.read()
+    exec(code, {'missingitems': missingitems})
+
 
 
 def getModel():
@@ -19,12 +54,7 @@ def getModel():
             X_train_resampled = np.load(currdirr+'\\xtrainedresampled.npy')
             y_train_resampled = np.load(currdirr+'\\ytrainedresampled.npy')
         except Exception as e:
-            print('Resampled data not found, training new model', flush=True)
-            with open(currdirr+'\\trainingset.py') as f:
-                code = f.read()
-            exec(code)
-            X_train_resampled = np.load(currdirr+'\\xtrainedresampled.npy')
-            y_train_resampled = np.load(currdirr+'\\ytrainedresampled.npy')
+            raise Exception('Resampled data install error')
         lgbm_params = {
         'subsample': 0.95, 
         'reg_lambda': 0.005623413251903491, 
@@ -72,10 +102,7 @@ if os.path.exists(currentdir+'\\scaler.joblib') and os.path.exists(currentdir+'\
     scale = joblib.load(currentdir+'\\scaler.joblib')
     preprocessor = joblib.load(currentdir+'\\preprocessor.pkl')
 else:
-    print('Scaler and preprocessor not found, running installer', flush=True)
-    with open(currentdir+'\\installer.py') as f:
-        code = f.read()
-    exec(code)
+    raise Exception('Scaler and preprocessor install  error')
 
 app.add_middleware(
     CORSMiddleware,
