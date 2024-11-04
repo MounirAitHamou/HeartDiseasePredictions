@@ -15,8 +15,16 @@ def getModel():
     currdirr = os.getcwd()
     def makeModel():
         print('Model not found, training model', flush=True)
-        X_train_resampled = np.load(currdirr+'\\xtrainedresampled.npy')
-        y_train_resampled = np.load(currdirr+'\\ytrainedresampled.npy')
+        try:
+            X_train_resampled = np.load(currdirr+'\\xtrainedresampled.npy')
+            y_train_resampled = np.load(currdirr+'\\ytrainedresampled.npy')
+        except Exception as e:
+            print('Resampled data not found, training new model', flush=True)
+            with open(currdirr+'\\trainingset.py') as f:
+                code = f.read()
+            exec(code)
+            X_train_resampled = np.load(currdirr+'\\xtrainedresampled.npy')
+            y_train_resampled = np.load(currdirr+'\\ytrainedresampled.npy')
         lgbm_params = {
         'subsample': 0.95, 
         'reg_lambda': 0.005623413251903491, 
