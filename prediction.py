@@ -79,11 +79,11 @@ def getModel():
     if os.path.exists(currdirr+'\\lightgbm_model.txt'):
         print('Model found', flush=True)
         try:
-            lgb.Booster(model_file=currdirr+'\\lightgbm_model.txt')
+            model = lgb.Booster(model_file=currdirr+'\\lightgbm_model.txt')
         except Exception as e:
             print('Model found but could not be loaded, training new one', flush=True)
-            return makeModel()
-        return  lgb.Booster(model_file=currdirr+'\\lightgbm_model.txt')
+            model = makeModel()
+        return model
     else:
         print('Model not found, training model', flush=True)
         return makeModel()
